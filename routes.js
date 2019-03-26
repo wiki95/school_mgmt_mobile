@@ -2,20 +2,16 @@ import { createStackNavigator, createAppContainer } from "react-navigation";
 import Home from "./components/Home";
 import Selection from "./components/Selection";
 import Announcement from "./components/Announcement";
-import Attendance from "./components/Attendance";
-import FeeRecord from "./components/FeeRecord";
-import ResultSheet from "./components/ResultSheet";
+import Profile from "./components/Profile";
 import Schedule from "./components/Schedule";
 
 const RootStack = createStackNavigator(
 	{
 		Home: Home,
 		Selection: Selection,
-		Announcement: Announcement,
-		Attendance: Attendance,
-		FeeRecord: FeeRecord,
-		ResultSheet: ResultSheet,
-		Schedule: Schedule
+		Schedule: Schedule,
+		Profile: Profile,
+		Announcement: Announcement
 	},
 	{
 		initialRouteName: "Home",

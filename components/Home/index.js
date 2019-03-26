@@ -1,6 +1,10 @@
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, AsyncStorage } from "react-native";
 import { Input, Item, Button, Text, Spinner } from "native-base";
+import { login, verify } from "../../api/auth";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { onLogin } from "../../redux/actions";
 class Home extends React.Component {
 	static navigationOptions = {
 		title: "SCHOOL PORTAL",
@@ -14,8 +18,7 @@ class Home extends React.Component {
 	};
 	state = {
 		nic: "",
-		pass: "",
-		isLoading: false
+		pass: ""
 	};
 	handleNicChanged = e => {
 		this.setState(prevState => {
@@ -42,15 +45,21 @@ class Home extends React.Component {
 		});
 	};
 	handleSubmit = () => {
-		// this.setState({
-		// 	isLoading: true
-		// });
-		this.props.navigation.navigate("Selection", {
-			nic: this.state.nic,
-			pass: this.state.pass
-		});
+		this.props.actions.onLogin(
+			{ nic: this.state.nic, password: this.state.pass },
+			this.props.navigation
+		);
 	};
+	async componentDidMount() {
+		const token = await AsyncStorage.getItem("Token");
+		verify(token).then(res => {
+			if (res) {
+				this.props.navigation.navigate("Selection");
+			}
+		});
+	}
 	render() {
+		const { isError, isLoading } = this.props.login;
 		return (
 			<React.Fragment>
 				<View style={styles.content}>
@@ -72,13 +81,12 @@ class Home extends React.Component {
 							placeholder="Enter Password"
 						/>
 					</Item>
+					{isError && (
+						<Text style={{ color: "red" }}>Nic or Password is Incorrect</Text>
+					)}
 					<View>
 						<Button onPress={this.handleSubmit} style={styles.btn}>
-							{this.state.isLoading ? (
-								<Spinner color="#ffff" />
-							) : (
-								<Text>Submit</Text>
-							)}
+							{isLoading ? <Spinner color="#ffff" /> : <Text>Submit</Text>}
 						</Button>
 					</View>
 				</View>
@@ -86,8 +94,20 @@ class Home extends React.Component {
 		);
 	}
 }
-
-export default Home;
+const mapStateToProps = state => ({
+	login: state.login
+});
+const mapDispatchToProps = dispatch => {
+	return {
+		actions: {
+			onLogin: bindActionCreators(onLogin, dispatch)
+		}
+	};
+};
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Home);
 
 const styles = StyleSheet.create({
 	content: {
