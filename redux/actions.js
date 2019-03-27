@@ -5,3 +5,9 @@ export const onLogin = (data, navigation) => {
 		other: navigation
 	};
 };
+export const onLogout = navigation => {
+	return {
+		type: "LOGOUT",
+		payload: navigation
+	};
+};

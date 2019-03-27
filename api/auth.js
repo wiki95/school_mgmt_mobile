@@ -16,19 +16,23 @@ export const login = async val => {
 };
 
 export const verify = async () => {
-	const token = await AsyncStorage.getItem("Token");
-	let config = {
-		method: "POST",
-		url: `http://192.168.1.100:4000/auth/verify`,
-		headers: {
-			Authorization: "Bearer " + token
-		}
-	};
 	try {
-		const res = await axios(config);
-		if (res.status !== undefined) {
-			if (res.status === 200) {
-				return true;
+		const user = await AsyncStorage.getItem("User");
+		if (user) {
+			let config = {
+				method: "POST",
+				url: `http://192.168.1.100:4000/auth/verify`,
+				headers: {
+					Authorization: "Bearer " + JSON.parse(user).token
+				}
+			};
+			const res = await axios(config);
+			if (res.status !== undefined) {
+				if (res.status === 200) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}

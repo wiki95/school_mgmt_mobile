@@ -1,7 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Dimensions, AsyncStorage } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { Input, Item, Button, Text, Spinner } from "native-base";
-import { login, verify } from "../../api/auth";
+import { verify } from "../../api/auth";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { onLogin } from "../../redux/actions";
@@ -50,13 +50,16 @@ class Home extends React.Component {
 			this.props.navigation
 		);
 	};
-	async componentDidMount() {
-		const token = await AsyncStorage.getItem("Token");
-		verify(token).then(res => {
-			if (res) {
-				this.props.navigation.navigate("Selection");
-			}
-		});
+	componentDidMount() {
+		verify()
+			.then(res => {
+				if (res) {
+					this.props.navigation.navigate("Selection");
+				}
+			})
+			.catch(err => {
+				console.warn(err);
+			});
 	}
 	render() {
 		const { isError, isLoading } = this.props.login;

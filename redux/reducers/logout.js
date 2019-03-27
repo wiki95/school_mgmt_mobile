@@ -2,17 +2,17 @@ const INITIAL_STATE = {
 	isLoading: false,
 	isError: false
 };
-const login = (state = INITIAL_STATE, action) => {
+const logout = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
-		case "LOGIN":
+		case "LOGOUT":
 			return { ...state, isLoading: true, isError: false };
-		case "LOGIN_SUCCEED":
+		case "LOGOUT_SUCCEED":
 			return { ...state, isError: false, isLoading: false };
-		case "LOGIN_FAILED":
+		case "LOGOUT_FAILED":
 			return { ...state, isError: true, isLoading: false };
 		default:
 			return state;
 	}
 };
 
-export default login;
+export default logout;

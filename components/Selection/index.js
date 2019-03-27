@@ -1,17 +1,13 @@
 import React from "react";
-import {
-	View,
-	Image,
-	StyleSheet,
-	TouchableOpacity,
-	AsyncStorage,
-	Text
-} from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { Container, Content, Spinner } from "native-base";
 import imgSchedule from "../../images/calendar.png";
 import imgUser from "../../images/user.png";
 import imgNotice from "../../images/bull-horn-announcer.png";
 import { verify } from "../../api/auth";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { onLogout } from "../../redux/actions";
 
 class Selection extends React.Component {
 	static navigationOptions = {
@@ -25,25 +21,28 @@ class Selection extends React.Component {
 			fontWeight: "bold"
 		}
 	};
-	state = {
-		isLoading: false,
-		token: "",
-		student: []
-	};
-	async componentDidMount() {
-		const token = await AsyncStorage.getItem("Token");
-		verify(token).then(res => {
-			if (!res) {
+
+	componentDidMount() {
+		verify()
+			.then(res => {
+				if (res === false) {
+					this.props.navigation.navigate("Home");
+				}
+			})
+			.catch(err => {
 				this.props.navigation.navigate("Home");
-			}
-		});
+			});
 	}
+	handleLogout = () => {
+		this.props.actions.onLogout(this.props.navigation);
+	};
 	render() {
 		const { navigation } = this.props;
+		const { isLoading, isError } = this.props.logout;
 		return (
 			<Container>
 				<Content>
-					{this.state.isLoading ? (
+					{isLoading ? (
 						<Spinner color="#a00000" />
 					) : (
 						<View style={styles.container}>
@@ -70,7 +69,7 @@ class Selection extends React.Component {
 									<Image style={styles.img} source={imgNotice} />
 								</TouchableOpacity>
 								<TouchableOpacity
-									onPress={() => navigation.navigate("Announcement")}
+									onPress={this.handleLogout}
 									style={styles.btn}
 								>
 									<Text style={{ fontSize: 20, fontWeight: "900" }}>
@@ -78,6 +77,9 @@ class Selection extends React.Component {
 									</Text>
 								</TouchableOpacity>
 							</View>
+							{isError && (
+								<Text style={{ color: "red" }}>Something Went Wrong</Text>
+							)}
 						</View>
 					)}
 				</Content>
@@ -113,4 +115,15 @@ const styles = StyleSheet.create({
 		flexDirection: "row"
 	}
 });
-export default Selection;
+const mapStateToProps = state => ({
+	logout: state.logout
+});
+const mapDispatchToProps = dispatch => ({
+	actions: {
+		onLogout: bindActionCreators(onLogout, dispatch)
+	}
+});
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Selection);

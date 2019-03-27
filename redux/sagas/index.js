@@ -1,12 +1,13 @@
 import { all, call } from "redux-saga/effects";
 import loginWatcher from "./authLogin";
+import logoutWatcher from "./authLogout";
 
 /// watcher saga --> actions --> worker saga
 function* rootSaga() {
 	try {
-		yield all([call(loginWatcher)]);
+		yield all([call(loginWatcher), call(logoutWatcher)]);
 	} catch (err) {
-		console.log(err);
+		console.warn(err);
 	}
 }
 
