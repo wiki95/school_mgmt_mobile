@@ -29,7 +29,7 @@ export const verify = async () => {
 			const res = await axios(config);
 			if (res.status !== undefined) {
 				if (res.status === 200) {
-					return true;
+					return JSON.parse(user);
 				} else {
 					return false;
 				}
@@ -42,4 +42,36 @@ export const verify = async () => {
 	} catch (err) {
 		return false;
 	}
+};
+
+export const getNotices = async val => {
+	try {
+		const user = await AsyncStorage.getItem("User");
+		let config = {
+			method: "POST",
+			url: "http://192.168.1.100:4000/notice",
+			headers: {
+				"content-type": "application/json",
+				Authorization: "Bearer " + JSON.parse(user).token
+			},
+			data: val,
+			json: true
+		};
+
+		return await axios(config);
+	} catch (err) {
+		console.warn(err.message);
+		return false;
+	}
+};
+export const getSchedule = async val => {
+	let config = {
+		method: "GET",
+		url: `http://192.168.1.100:4000/schedule/${val.class}/${val.section}`,
+		headers: {
+			"content-type": "application/json"
+		}
+	};
+
+	return await axios(config);
 };

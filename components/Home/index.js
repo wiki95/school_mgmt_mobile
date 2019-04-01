@@ -53,7 +53,7 @@ class Home extends React.Component {
 	componentDidMount() {
 		verify()
 			.then(res => {
-				if (res) {
+				if (res !== false) {
 					this.props.navigation.navigate("Selection");
 				}
 			})

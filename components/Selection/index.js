@@ -11,7 +11,7 @@ import { onLogout } from "../../redux/actions";
 
 class Selection extends React.Component {
 	static navigationOptions = {
-		title: "ABC STUDENT",
+		title: "STUDENT DATA",
 		headerLeft: null,
 		headerStyle: {
 			backgroundColor: "#a00000"
@@ -26,6 +26,7 @@ class Selection extends React.Component {
 		verify()
 			.then(res => {
 				if (res === false) {
+					console.warn(res);
 					this.props.navigation.navigate("Home");
 				}
 			})
